@@ -1,29 +1,46 @@
 pipeline {
-  agent any
-  tools {
-    jdk "JDK"
-    gradle "Gradle"
-  }
-  stages {
-    stage('Checkout') {
-      git branch:'main' , url:'https://github.com/iQnoeN/GradleApp.git'
+    agent any  
+
+    tools {
+        gradle 'Gradle'  
+        jdk 'JDK'
     }
-    stage('Build') {
-      sh 'gradle build'
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/iQnoeN/GradleApp.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'gradle build'  
+            }
+        }
+
+       stage('Test') {
+           steps {
+               sh 'gradle test'  
+           }
+        }
+
+              
+        stage('Run Application') {
+            steps {
+      
+                sh 'gradle run'
+            }
+        }
+
+        
     }
-    stage('Test') {
-      sh 'gradle test'
+
+    post {
+        success {
+            echo 'Build and deployment successful!'
+        }
+        failure {
+            echo 'Build failed!'
+        }
     }
-    stage('Run Application') {
-      sh'gradle run'
-    }
-  }
-  post {
-    success {
-      echo "Build Success"
-    }
-    failure {
-      echo "Build Failure"
-    }
-  }
 }
